@@ -1,4 +1,5 @@
 import express from 'express';
+import { Document } from 'mongoose';
 const router = express.Router();
 import QuestionnaireModel, { Questionnaire } from '../models/Questionnaire';
 
@@ -7,7 +8,7 @@ router.get(
     async (req: express.Request, res: express.Response) => {
         const userID = req.headers.userid?.toString();
         if (userID) {
-            console.log(req);
+            console.log(req.method, req.url, userID);
             let questionnaires = await QuestionnaireModel.find({userID: userID});
             res.json(questionnaires);
         } else {
@@ -23,12 +24,23 @@ router.patch(
     '/questionnaire',
     async (req: express.Request, res: express.Response) => {
         const userID = req.headers.userid?.toString();
-        const questionnaire = req.body.questionnaire;
-        console.log(questionnaire);
-        res.json({
-            ...questionnaire,
-            userID
-        });
+        const questionnaire = req.body;
+        if (userID && questionnaire) {
+            let updatedQuestionnaire: Document<Questionnaire> | null = await QuestionnaireModel.findOneAndUpdate({_id: questionnaire._id}, questionnaire, {new: true});
+            if (updatedQuestionnaire === null) {
+                res.json({
+                    message: 'Das Update ist fehlgeschlagen.',
+                    success: false
+                });
+                
+            } else if (updatedQuestionnaire) {
+                res.json({
+                    message: 'Fragebogen erfolgreich geupdated.',
+                    success: true,
+                    questionnaire: updatedQuestionnaire.toJSON()
+                })
+            }
+        }
     }
 )
 

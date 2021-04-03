@@ -5,7 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "tsc": "tsc"
+    "tsc": "tsc",
+    "compile": "tsc && node dist/server.js",
+    "dev": "./node_modules/nodemon/bin/nodemon.js -e ts --exec \"npm run compile\""
   },
   "keywords": [],
   "author": "",
@@ -31,6 +33,7 @@
     "@types/jsonwebtoken": "^8.5.0",
     "@types/passport": "^1.0.5",
     "@types/passport-jwt": "^3.0.3",
-    "@types/passport-local": "^1.0.33"
+    "@types/passport-local": "^1.0.33",
+    "tsc-watch": "^4.2.9"
   }
 }
